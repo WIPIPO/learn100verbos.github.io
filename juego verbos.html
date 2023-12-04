@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Verbos en Inglés</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #question-container {
+            margin: 20px;
+        }
+        #options-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .option {
+            margin: 5px;
+            padding: 10px;
+            width: 200px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .option:hover {
+            background-color: #f0f0f0;
+        }
+        #score-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Juego de Verbos en Inglés</h1>
+    <div id="question-container">
+        <p id="question"></p>
+        <div id="options-container"></div>
+    </div>
+    <div id="score-container"></div>
+    <button id="restart-btn" style="display: none;" onclick="restartGame()">Reiniciar</button>
+
+    <script>
+        const questions = [
+        {
+            question: '¿Cómo se dice "ser/estar" en inglés?',
+            options: ['Tell', 'Meet', 'Be', 'Find'],
+            correctOption: 2
+        },
+        {
+            question: '¿Cómo se dice "tener" en inglés?',
+            options: ['Talk', 'have', 'Sing', 'Read'],
+            correctOption: 1
+        },
+        {
+            question: '¿Cómo se dice "hacer" en inglés?',
+            options: ['do', 'Jump', 'Eat', 'Sleep'],
+            correctOption: 0
+        },
+        {
+            question: '¿Cómo se dice "decir" en inglés?',
+            options: ['say', 'Draw', 'Listen', 'Speak'],
+            correctOption: 0
+        },
+        {
+            question: '¿Cómo se dice "obtener" en inglés?',
+            options: ['Tell', 'Meet', 'Be', 'get'],
+            correctOption: 3
+        },
+        {
+            question: '¿Cómo se dice "hacer" en inglés?',
+            options: ['give', 'use', 'make', 'take'],
+            correctOption: 2
+        },
+        {
+            question: '¿Cómo se dice "ir" en inglés?',
+            options: ['responsive', 'go', 'do', 'think'],
+            correctOption: 1
+        },
+        {
+            question: '¿Cómo se dice "saber/conocer" en inglés?',
+            options: ['know', 'think', 'set', 'show'],
+            correctOption: 0
+        },
+        {
+            question: '¿Cómo se dice "tomar" en inglés?',
+            options: ['Look', 'Take', 'Begin', 'Try'],
+            correctOption: 1
+        },
+        {
+            question: '¿Cómo se dice "ver" en inglés?',
+            options: ['Set', 'Meet', 'Sit', 'See'],
+            correctOption: 3
+        },
+        {
+            question: '¿Cómo se dice "venir" en inglés?',
+            options: ['call', 'come', 'speak', 'join'],
+            correctOption: 1
+        },
+        {
+            question: '¿Cómo se dice "pensar" en inglés?',
+            options: ['know', 'keep', 'think', 'put'],
+            correctOption: 2
+        },
+        {
+            question: '¿Cómo se dice "mirar" en inglés?',
+            options: ['see', 'explain', 'speak', 'look'],
+            correctOption: 3
+        },
+        {
+            question: '¿Cómo se dice "querer" en inglés?',
+            options: ['want', 'give', 'make', 'feel'],
+            correctOption: 0
+        },
+        {
+            question: '¿Cómo se dice "dar" en inglés?',
+            options: ['wanted', 'give', 'speak', 'join'],
+            correctOption: 1
+        },
+        {
+            question: '¿Cómo se dice "usar" en inglés?',
+            options: ['mean', 'talk', 'use', 'react'],
+            correctOption: 2
+        },
+        {
+            question: '¿Cómo se dice "encontrar" en inglés?',
+            options: ['want', 'find', 'sit', 'succed'],
+            correctOption: 1
+        },
+        {
+            question: '¿Cómo se dice "contar/decir" en inglés?',
+            options: ['look', 'say', 'tell', 'come'],
+            correctOption: 2
+        },
+        {
+            question: '¿Cómo se dice "preguntar" en inglés?',
+            options: ['seem', 'happen', 'ask', 'move'],
+            correctOption: 2
+        },
+        {
+            question: '¿Cómo se dice "trabajar" en inglés?',
+            options: ['work', 'come', 'speak', 'join'],
+            correctOption: 0
+        },
+            // Agrega más preguntas según sea necesario
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let totalQuestions = 0;
+        let correctAnswers = 0;
+
+        const questionElement = document.getElementById('question');
+        const optionsContainer = document.getElementById('options-container');
+        const scoreContainer = document.getElementById('score-container');
+        const restartButton = document.getElementById('restart-btn');
+
+        function shuffleArray(array) {
+            // Función para mezclar preguntas aleatoriamente
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function loadQuestion() {
+            shuffleArray(questions); // Mezclar preguntas antes de cada juego
+
+            const currentQuestion = questions[currentQuestionIndex];
+
+            questionElement.textContent = currentQuestion.question;
+
+            optionsContainer.innerHTML = '';
+            currentQuestion.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.textContent = option;
+                optionElement.addEventListener('click', () => checkAnswer(index));
+                optionsContainer.appendChild(optionElement);
+            });
+        }
+
+        function checkAnswer(selectedIndex) {
+            const currentQuestion = questions[currentQuestionIndex];
+            totalQuestions++; // Incrementar la cantidad total de preguntas
+
+            if (selectedIndex === currentQuestion.correctOption) {
+                score += 1; // Punto por respuesta correcta
+                correctAnswers++; // Incrementar la cantidad de respuestas correctas
+            }
+
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                endGame();
+            }
+        }
+
+        function endGame() {
+            // Mostrar la puntuación final, la cantidad total de preguntas y la cantidad de respuestas correctas
+            scoreContainer.innerHTML = `<p>Puntuación final: ${score}</p>`;
+            scoreContainer.innerHTML += `<p>Total de preguntas: ${totalQuestions}</p>`;
+            scoreContainer.innerHTML += `<p>Respuestas correctas: ${correctAnswers}</p>`;
+            // Mostrar el botón de reinicio
+            restartButton.style.display = 'block';
+        }
+
+        function restartGame() {
+            // Reiniciar las variables
+            currentQuestionIndex = 0;
+            score = 0;
+            totalQuestions = 0;
+            correctAnswers = 0;
+            // Ocultar el botón de reinicio
+            restartButton.style.display = 'none';
+            // Iniciar el juego cargando la primera pregunta
+            loadQuestion();
+            // Limpiar la puntuación final y las estadísticas
+            scoreContainer.innerHTML = '';
+        }
+
+        // Iniciar el juego cargando la primera pregunta
+        loadQuestion();
+    </script>
+</body>
+</html>
