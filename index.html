@@ -35,7 +35,8 @@
     </style>
 </head>
 <body>
-    <h1>Juego de Verbos en Inglés</h1>
+    <h1>Aprende verbos con preguntas</h1>
+    <h2>100 verbos en ingles(en desarrollo)</h2>
     <div id="question-container">
         <p id="question"></p>
         <div id="options-container"></div>
@@ -44,7 +45,7 @@
     <button id="restart-btn" style="display: none;" onclick="restartGame()">Reiniciar</button>
 
     <script>
-        const questions = [
+        const allQuestions = [
         {
             question: '¿Cómo se dice "ser/estar" en inglés?',
             options: ['Tell', 'Meet', 'Be', 'Find'],
@@ -148,7 +149,7 @@
             // Agrega más preguntas según sea necesario
         ];
 
-        let currentQuestionIndex = 0;
+        let remainingQuestions = [...allQuestions];
         let score = 0;
         let totalQuestions = 0;
         let correctAnswers = 0;
@@ -167,9 +168,15 @@
         }
 
         function loadQuestion() {
-            shuffleArray(questions); // Mezclar preguntas antes de cada juego
+            if (remainingQuestions.length === 0) {
+                // Si no quedan preguntas, mostrar resultados y finalizar juego
+                endGame();
+                return;
+            }
 
-            const currentQuestion = questions[currentQuestionIndex];
+            shuffleArray(remainingQuestions);
+
+            const currentQuestion = remainingQuestions.pop();
 
             questionElement.textContent = currentQuestion.question;
 
@@ -178,13 +185,12 @@
                 const optionElement = document.createElement('div');
                 optionElement.className = 'option';
                 optionElement.textContent = option;
-                optionElement.addEventListener('click', () => checkAnswer(index));
+                optionElement.addEventListener('click', () => checkAnswer(index, currentQuestion));
                 optionsContainer.appendChild(optionElement);
             });
         }
 
-        function checkAnswer(selectedIndex) {
-            const currentQuestion = questions[currentQuestionIndex];
+        function checkAnswer(selectedIndex, currentQuestion) {
             totalQuestions++; // Incrementar la cantidad total de preguntas
 
             if (selectedIndex === currentQuestion.correctOption) {
@@ -192,12 +198,8 @@
                 correctAnswers++; // Incrementar la cantidad de respuestas correctas
             }
 
-            currentQuestionIndex++;
-            if (currentQuestionIndex < questions.length) {
-                loadQuestion();
-            } else {
-                endGame();
-            }
+            // Cargar la siguiente pregunta
+            loadQuestion();
         }
 
         function endGame() {
@@ -211,7 +213,7 @@
 
         function restartGame() {
             // Reiniciar las variables
-            currentQuestionIndex = 0;
+            remainingQuestions = [...allQuestions];
             score = 0;
             totalQuestions = 0;
             correctAnswers = 0;
